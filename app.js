@@ -9,6 +9,8 @@ if (configOutput.error) {
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const mongoose = require("mongoose");
+
 const authRoutes = require("./routes/auth-routes");
 const boardCategoriesRoutes = require("./routes/boardCategories-routes");
 const boardsRoutes = require("./routes/boards-routes");
@@ -39,4 +41,10 @@ app.use((error, req, res, next) => {
   return res.json({ message: error.message || "An unknown error occurred." });
 });
 
-app.listen(process.env.PORT);
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log(`Listening on port ${process.env.PORT}`);
+    app.listen(process.env.PORT);
+  })
+  .catch((err) => console.log(err));
