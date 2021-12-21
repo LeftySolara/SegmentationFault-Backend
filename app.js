@@ -9,13 +9,23 @@ if (configOutput.error) {
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const authRoutes = require("./routes/auth-routes");
+const boardCategoriesRoutes = require("./routes/boardCategories-routes");
+const boardsRoutes = require("./routes/boards-routes");
+const postRoutes = require("./routes/posts-routes");
+const threadsRoutes = require("./routes/threads-routes");
+const usersRoutes = require("./routes/users-routes");
+
 const app = express();
 
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  return res.json({ message: "Hello World!" });
-});
+app.use("/auth", authRoutes);
+app.use("/boardCategories", boardCategoriesRoutes);
+app.use("/boards", boardsRoutes);
+app.use("/posts", postRoutes);
+app.use("/threads", threadsRoutes);
+app.use("/users", usersRoutes);
 
 /*
  * Default error handling function.
