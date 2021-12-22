@@ -1,19 +1,15 @@
 const express = require("express");
 const { check } = require("express-validator");
 
+const authController = require("../controllers/auth-controller");
+
 const router = express.Router();
 
-router.get("/checkIsAuthenticated", (req, res, next) => {
-  return res.json({ message: "Checking if user is authenticated..." });
-});
+router.get("/checkIsAuthenticated", authController.checkIsAuthenticated);
 
-router.get("/checkIsAdmin", (req, res, next) => {
-  return res.json({ message: "Checking if user is admin..." });
-});
+router.get("/checkIsAdmin", authController.checkIsAdmin);
 
-router.get("/logout", (req, res, next) => {
-  return res.json({ message: "Logging out..." });
-});
+router.get("/logout", authController.logout);
 
 router.post(
   "/register",
@@ -36,13 +32,9 @@ router.post(
       return true;
     }),
   ],
-  (req, res, next) => {
-    return res.json({ message: "Registering user..." });
-  },
+  authController.registerUser,
 );
 
-router.post("/login", (req, res, next) => {
-  return res.json({ message: "Logging in..." });
-});
+router.post("/login", authController.login);
 
 module.exports = router;
