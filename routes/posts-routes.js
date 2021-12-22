@@ -1,21 +1,15 @@
 const express = require("express");
 const { check } = require("express-validator");
 
+const postController = require("../controllers/posts-controller");
+
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
-  return res.json({ message: "Fetching all posts..." });
-});
+router.get("/", postController.getAllPosts);
 
-router.get("/:postId", (req, res, next) => {
-  const id = req.params.postId;
-  return res.json({ message: `Fetching post ${id}...` });
-});
+router.get("/:postId", postController.getPostById);
 
-router.get("/user/:userId", (req, res, next) => {
-  const id = req.params.userId;
-  return res.json({ message: `Fetching posts by user ${id}` });
-});
+router.get("/user/:userId", postController.getPostsByUser);
 
 router.post(
   "/",
@@ -24,23 +18,15 @@ router.post(
     check("thread").not().isEmpty().isAlphanumeric(),
     check("content").not().isEmpty(),
   ],
-  (req, res, next) => {
-    return res.json({ message: "Creating post..." });
-  },
+  postController.createPost,
 );
 
 router.patch(
   "/:postId",
   [check("content").not().isEmpty()],
-  (req, res, next) => {
-    const id = req.params.postId;
-    return res.json({ message: `Updating post ${id}...` });
-  },
+  postController.updatePost,
 );
 
-router.delete("/:postId", (req, res, next) => {
-  const id = req.params.postId;
-  return res.json({ message: `Deleting post ${id}...` });
-});
+router.delete("/:postId", postController.deletePost);
 
 module.exports = router;
