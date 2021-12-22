@@ -20,7 +20,7 @@ const userSchema = new Schema({
     uniqueCaseInsensitive: true,
   },
   password: { type: String, required: true, minlength: 8 },
-  joinDate: { type: Date, required: true },
+  joinDate: { type: Date, required: true, immutable: true },
   avatar: { type: String, required: false },
   posts: [{ type: mongoose.Types.ObjectId, required: true, ref: "Post" }],
   threads: [{ type: mongoose.Types.ObjectId, required: true, ref: "Thread" }],
