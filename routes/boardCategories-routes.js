@@ -1,33 +1,26 @@
 const express = require("express");
 const { check } = require("express-validator");
 
+const boardCategoriesController = require("../controllers/boardCategories-controller");
+
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
-  return res.json({ message: "Fetching all board categories..." });
-});
+router.get("/", boardCategoriesController.getAllCategories);
 
-router.get("/:boardCategoryId", (req, res, next) => {
-  const id = req.params.boardCategoryId;
-  return res.json({ message: `Fetching board category ${id}...` });
-});
+router.get("/:boardCategoryId", boardCategoriesController.getCategoryById);
 
-router.post("/", [check("topic").not().isEmpty()], (req, res, next) => {
-  return res.json({ message: "Creating board category..." });
-});
+router.post(
+  "/",
+  [check("topic").not().isEmpty()],
+  boardCategoriesController.createCategory,
+);
 
 router.patch(
   "/:boardCategoryId",
   [check("topic").not().isEmpty()],
-  (req, res, next) => {
-    const id = req.params.boardCategoryId;
-    return res.json({ message: `Updating board category ${id}...` });
-  },
+  boardCategoriesController.updateCategory,
 );
 
-router.delete("/:boardCategoryId", (req, res, next) => {
-  const id = req.params.boardCategoryId;
-  return res.json({ message: `Deleting board category ${id}...` });
-});
+router.delete("/:boardCategoryId", boardCategoriesController.deleteCategory);
 
 module.exports = router;
