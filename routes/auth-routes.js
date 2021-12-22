@@ -14,6 +14,10 @@ router.get("/logout", (req, res, next) => {
   return res.json({ message: "Logging out..." });
 });
 
+router.post("/register", (req, res, next) => {
+  return res.json({ message: "Registering user..." });
+});
+
 router.post("/login", (req, res, next) => {
   return res.json({ message: "Logging in..." });
 });
