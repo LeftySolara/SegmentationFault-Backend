@@ -11,6 +11,8 @@ const bodyParser = require("body-parser");
 
 const mongoose = require("mongoose");
 
+const logger = require("./utils/logger");
+
 const authRoutes = require("./routes/auth-routes");
 const boardCategoriesRoutes = require("./routes/boardCategories-routes");
 const boardsRoutes = require("./routes/boards-routes");
@@ -44,7 +46,8 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log(`Listening on port ${process.env.PORT}`);
+    logger.info(`Connected to ${process.env.NODE_ENV} database.`);
+    logger.info(`Listening on port ${process.env.PORT}.`);
     app.listen(process.env.PORT);
   })
-  .catch((err) => console.log(err));
+  .catch((err) => logger.error(err.message));
