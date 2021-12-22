@@ -1,4 +1,5 @@
 const express = require("express");
+const { check } = require("express-validator");
 
 const router = express.Router();
 
@@ -16,14 +17,26 @@ router.get("/user/:userId", (req, res, next) => {
   return res.json({ message: `Fetching posts by user ${id}` });
 });
 
-router.post("/", (req, res, next) => {
-  return res.json({ message: "Creating post..." });
-});
+router.post(
+  "/",
+  [
+    check("author").not().isEmpty().isAlphanumeric(),
+    check("thread").not().isEmpty().isAlphanumeric(),
+    check("content").not().isEmpty(),
+  ],
+  (req, res, next) => {
+    return res.json({ message: "Creating post..." });
+  },
+);
 
-router.patch("/:postId", (req, res, next) => {
-  const id = req.params.postId;
-  return res.json({ message: `Updating post ${id}...` });
-});
+router.patch(
+  "/:postId",
+  [check("content").not().isEmpty()],
+  (req, res, next) => {
+    const id = req.params.postId;
+    return res.json({ message: `Updating post ${id}...` });
+  },
+);
 
 router.delete("/:postId", (req, res, next) => {
   const id = req.params.postId;

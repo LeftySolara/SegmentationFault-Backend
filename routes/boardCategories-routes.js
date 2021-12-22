@@ -1,4 +1,5 @@
 const express = require("express");
+const { check } = require("express-validator");
 
 const router = express.Router();
 
@@ -11,14 +12,18 @@ router.get("/:boardCategoryId", (req, res, next) => {
   return res.json({ message: `Fetching board category ${id}...` });
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", [check("topic").not().isEmpty()], (req, res, next) => {
   return res.json({ message: "Creating board category..." });
 });
 
-router.patch("/:boardCategoryId", (req, res, next) => {
-  const id = req.params.boardCategoryId;
-  return res.json({ message: `Updating board category ${id}...` });
-});
+router.patch(
+  "/:boardCategoryId",
+  [check("topic").not().isEmpty()],
+  (req, res, next) => {
+    const id = req.params.boardCategoryId;
+    return res.json({ message: `Updating board category ${id}...` });
+  },
+);
 
 router.delete("/:boardCategoryId", (req, res, next) => {
   const id = req.params.boardCategoryId;

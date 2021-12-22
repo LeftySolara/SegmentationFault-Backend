@@ -1,4 +1,5 @@
 const express = require("express");
+const { check } = require("express-validator");
 
 const router = express.Router();
 
@@ -11,9 +12,16 @@ router.get("/:boardId", (req, res, next) => {
   return res.json({ message: `Fetching board ${id}...` });
 });
 
-router.post("/", (req, res, next) => {
-  return res.json({ message: "Creating board..." });
-});
+router.post(
+  "/",
+  [
+    check("topic").not().isEmpty(),
+    check("category").not().isEmpty().isAlphanumeric(),
+  ],
+  (req, res, next) => {
+    return res.json({ message: "Creating board..." });
+  },
+);
 
 router.patch("/:boardId", (req, res, next) => {
   const id = req.params.boardId;
