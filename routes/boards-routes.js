@@ -1,16 +1,13 @@
 const express = require("express");
 const { check } = require("express-validator");
 
+const boardsController = require("../controllers/boards-controller");
+
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
-  return res.json({ message: "Fetching all boards..." });
-});
+router.get("/", boardsController.getAllBoards);
 
-router.get("/:boardId", (req, res, next) => {
-  const id = req.params.boardId;
-  return res.json({ message: `Fetching board ${id}...` });
-});
+router.get("/:boardId", boardsController.getBoardById);
 
 router.post(
   "/",
@@ -18,19 +15,15 @@ router.post(
     check("topic").not().isEmpty(),
     check("category").not().isEmpty().isAlphanumeric(),
   ],
-  (req, res, next) => {
-    return res.json({ message: "Creating board..." });
-  },
+  boardsController.createBoard,
 );
 
-router.patch("/:boardId", (req, res, next) => {
-  const id = req.params.boardId;
-  return res.json({ message: `Updating board ${id}...` });
-});
+router.patch(
+  "/:boardId",
+  [check("topic").not().isEmpty()],
+  boardsController.updateBoard,
+);
 
-router.delete("/:boardId", (req, res, next) => {
-  const id = req.params.boardId;
-  return res.json(`Deleting board ${id}...`);
-});
+router.delete("/:boardId", boardsController.deleteBoard);
 
 module.exports = router;
