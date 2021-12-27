@@ -1,16 +1,13 @@
 const express = require("express");
 const { check } = require("express-validator");
 
+const usersController = require("../controllers/users-controller");
+
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
-  return res.json({ message: "Fetching all users..." });
-});
+router.get("/", usersController.getAllUsers);
 
-router.get("/:userId", (req, res, next) => {
-  const id = req.params.userId;
-  return res.json({ message: `Fetching user ${id}...` });
-});
+router.get("/:userId", usersController.getUserById);
 
 router.post(
   "/",
@@ -33,9 +30,7 @@ router.post(
       return true;
     }),
   ],
-  (req, res, next) => {
-    return res.json({ message: "Creating user..." });
-  },
+  usersController.createUser,
 );
 
 router.patch(
@@ -58,14 +53,9 @@ router.patch(
       return true;
     }),
   ],
-  (req, res, next) => {
-    return res.json({ message: "Updating user..." });
-  },
+  usersController.updateUser,
 );
 
-router.delete("/:userId", (req, res, next) => {
-  const id = req.params.userId;
-  return res.json({ message: `Deleting user ${id}...` });
-});
+router.delete("/:userId", usersController.deleteUser);
 
 module.exports = router;
