@@ -4,13 +4,42 @@ const logger = require("../utils/logger");
 
 const User = require("../models/user");
 
-const getAllUsers = (req, res, next) => {
-  return res.json({ message: "Fetching all users..." });
+/**
+ * Fetches a list of all users in the database.
+ */
+const getAllUsers = async (req, res, next) => {
+  let users;
+
+  try {
+    users = await User.find({}, "-password");
+  } catch (err) {
+    logger.error("Failed to fetch users for GET request at /users");
+    const error = new HttpError("Fetching users failed.", 500);
+    return next(error);
+  }
+
+  return res.json({
+    users: users.map((user) => user.toObject({ getters: true })),
+  });
 };
 
-const getUserById = (req, res, next) => {
-  const id = req.params.userId;
-  return res.json({ message: `Fetching user ${id}...` });
+/**
+ * Fetches a user based on their user id.
+ *
+ * @returns On success, returns a JSON-formatted HTTP response containing the user's information.
+ */
+const getUserById = async (req, res, next) => {
+  const { userId } = req.params;
+
+  let user;
+  try {
+    user = await User.findById(userId, "-password");
+  } catch (err) {
+    const error = new HttpError(`Could not find user with id ${userId}.`, 404);
+    return next(error);
+  }
+
+  return res.json({ user: user.toObject({ getters: true }) });
 };
 
 /**
