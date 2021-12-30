@@ -160,13 +160,7 @@ const updateUser = async (req, res, next) => {
   return res.json({ user: returnedUser });
 };
 
-const deleteUser = (req, res, next) => {
-  const id = req.params.userId;
-  return res.json({ message: `Deleting user ${id}...` });
-};
-
 exports.getAllUsers = getAllUsers;
 exports.getUserById = getUserById;
 exports.createUser = createUser;
 exports.updateUser = updateUser;
-exports.deleteUser = deleteUser;

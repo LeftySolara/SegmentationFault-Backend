@@ -60,6 +60,4 @@ router.patch(
   usersController.updateUser,
 );
 
-router.delete("/:userId", usersController.deleteUser);
-
 module.exports = router;
