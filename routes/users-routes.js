@@ -33,9 +33,13 @@ router.post(
   usersController.createUser,
 );
 
+/* TODO: make sure user is only authorized to edit their own information
+ *       and only when authenticated.
+ */
 router.patch(
   "/:userId",
   [
+    check("username").not().isEmpty(),
     check("email").isEmail(),
     check("password")
       .isLength({ min: 8 })

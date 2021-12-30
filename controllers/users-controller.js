@@ -107,12 +107,57 @@ const createUser = async (req, res, next) => {
   return res.status(201).json({ message: `Created new user ${username}` });
 };
 
-const updateUser = (req, res, next) => {
+/**
+ * Updates a user's information.
+ *
+ * @param {String} req.body.username The username of the user.
+ * @param {String} req.body.email The user's email address.
+ * @param {String} req.body.password The user's password.
+ * @param {String} req.body.avatar The user's avatar image.
+ *
+ * @returns On success, returns a JSON-formatted HTTP response containing the user's updated information.
+ */
+const updateUser = async (req, res, next) => {
   const validationError = validateRequestInputs(req);
   if (validationError) {
     return next(validationError);
   }
-  return res.json({ message: "Updating user..." });
+
+  const { username, email, password, avatar } = req.body;
+  const { userId } = req.params;
+  let user;
+
+  try {
+    user = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError("User not found.", 404);
+    return next(error);
+  }
+
+  user.username = username;
+  user.email = email;
+  user.password = password;
+  user.avatar = avatar;
+
+  try {
+    await user.save({ validateModifiedOnly: true });
+  } catch (err) {
+    const error = new HttpError("Could not update user information.", 500);
+    return next(error);
+  }
+
+  /* Here we manually remove the password property from the returned user object.
+   * This does not affect the password field in the document stored in the database.
+   *
+   * We do this because mongoose's toObject() method fetches all fields of a document regardless
+   * of the projection specified in the previous find() call. So, for example, calling
+   * user = User.findById(userId, "-password") will fetch the document with the correct projection,
+   * but the following user.toObject() call will re-add the password property.
+   */
+  const returnedUser = user.toObject({ getters: true });
+  delete returnedUser.password;
+
+  return res.json({ user: returnedUser });
 };
 
 const deleteUser = (req, res, next) => {
