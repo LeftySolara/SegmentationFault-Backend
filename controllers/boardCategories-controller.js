@@ -4,13 +4,48 @@ const logger = require("../utils/logger");
 
 const BoardCategory = require("../models/boardCategory");
 
-const getAllCategories = (req, res, next) => {
-  return res.json({ message: "Fetching all board categories..." });
+/**
+ * Fetches all board categories from the database.
+ */
+const getAllCategories = async (req, res, next) => {
+  let boardCategories;
+
+  try {
+    boardCategories = await BoardCategory.find({});
+  } catch (err) {
+    logger.error(
+      "Failed to fetch board categories for GET request at /boardCategories",
+    );
+    const error = new HttpError("Fetching board categories failed.", 500);
+    return next(error);
+  }
+
+  return res.status(200).json({
+    boardCategories: boardCategories.map((category) =>
+      category.toObject({ getters: true }),
+    ),
+  });
 };
 
-const getCategoryById = (req, res, next) => {
-  const id = req.params.boardCategoryId;
-  return res.json({ message: `Fetching board category ${id}...` });
+/**
+ * Fetches a board category based on its ID.
+ */
+const getCategoryById = async (req, res, next) => {
+  const { boardCategoryId } = req.params;
+
+  let boardCategory;
+  try {
+    boardCategory = await BoardCategory.findById(boardCategoryId);
+  } catch (err) {
+    const error = new HttpError(
+      `Could not find board category with id ${boardCategoryId}.`,
+    );
+    return next(error);
+  }
+
+  return res
+    .status(200)
+    .json({ boardCategory: boardCategory.toObject({ getters: true }) });
 };
 
 /**
