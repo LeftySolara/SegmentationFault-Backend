@@ -132,9 +132,42 @@ const updateCategory = async (req, res, next) => {
     .json({ boardCategory: boardCategory.toObject({ getters: true }) });
 };
 
-const deleteCategory = (req, res, next) => {
-  const id = req.params.boardCategoryId;
-  return res.json({ message: `Deleting board category ${id}...` });
+/**
+ * Deletes a board category from the database.
+ */
+const deleteCategory = async (req, res, next) => {
+  const { boardCategoryId } = req.params;
+
+  let boardCategory;
+  try {
+    boardCategory = await BoardCategory.findById(boardCategoryId);
+  } catch (err) {
+    const error = new HttpError("Could not delete board category.", 500);
+    return next(error);
+  }
+
+  if (!boardCategory) {
+    const error = new HttpError(
+      "Could not find a board category for this ID.",
+      404,
+    );
+    return next(error);
+  }
+
+  /* TODO: Also delete any boards that belong to the category.
+   *       Those boards should, in turn, delete their threads,
+   *       and those threads would delete their posts.
+   */
+  try {
+    await BoardCategory.findByIdAndDelete(boardCategoryId);
+  } catch (err) {
+    const error = new HttpError("Unable to delete board category.", 500);
+    return next(error);
+  }
+
+  return res
+    .status(200)
+    .json({ message: "Successfully deleted board category." });
 };
 
 exports.getAllCategories = getAllCategories;
