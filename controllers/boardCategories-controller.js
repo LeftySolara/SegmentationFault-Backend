@@ -95,13 +95,41 @@ const createCategory = async (req, res, next) => {
   return res.status(201).json({ message: `Created new category ${topic}.` });
 };
 
-const updateCategory = (req, res, next) => {
+/**
+ * Updates a board category's information.
+ *
+ * @param {String} req.body.topic The new topic to assign to the category.
+ *
+ * @returns On success, returns a JSON-formatted HTTP response. On failure, returns an HttpError object.
+ */
+const updateCategory = async (req, res, next) => {
   const validationError = validateRequestInputs(req);
   if (validationError) {
     return next(validationError);
   }
-  const id = req.params.boardCategoryId;
-  return res.json({ message: `Updating board category ${id}...` });
+
+  const { topic } = req.body;
+  const { boardCategoryId } = req.params;
+  let boardCategory;
+
+  try {
+    boardCategory = await BoardCategory.findById(boardCategoryId);
+  } catch (err) {
+    const error = new HttpError("Board category not found.", 404);
+    return next(error);
+  }
+
+  boardCategory.topic = topic;
+  try {
+    await boardCategory.save();
+  } catch (err) {
+    const error = new HttpError("Could not update board category.", 500);
+    return next(error);
+  }
+
+  return res
+    .status(200)
+    .json({ boardCategory: boardCategory.toObject({ getters: true }) });
 };
 
 const deleteCategory = (req, res, next) => {
