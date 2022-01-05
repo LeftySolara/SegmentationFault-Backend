@@ -119,13 +119,59 @@ const createBoard = async (req, res, next) => {
   return res.status(201).json({ message: `Created new board ${topic}.` });
 };
 
-const updateBoard = (req, res, next) => {
+/**
+ * Updates a board's information.
+ *
+ * @param {String} req.body.topic The new topic for the board.
+ * @param {String} req.body.categoryId The new category to assign the board to.
+ *
+ * @returns An HTTP response containing the board's updated information.
+ */
+const updateBoard = async (req, res, next) => {
   const validationError = validateRequestInputs(req);
   if (validationError) {
     return next(validationError);
   }
-  const id = req.params.boardId;
-  return res.json({ message: `Updating board ${id}...` });
+
+  const { topic, categoryId } = req.body;
+  const { boardId } = req.params;
+
+  let board;
+  try {
+    board = await Board.findById(boardId).populate("category");
+  } catch (err) {
+    const error = new HttpError("Board not found.", 404);
+    return next(error);
+  }
+
+  try {
+    board.topic = topic;
+
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+
+    if (categoryId && categoryId !== board.category) {
+      /* Remove from source category and add to target category. */
+      board.category.boards.pull(board);
+      await board.category.save({ session: sess, validateModifiedOnly: true });
+
+      const targetCategory = await BoardCategory.findById(categoryId);
+      targetCategory.boards.push(boardId);
+      await targetCategory.save({ session: sess, validateModifiedOnly: true });
+
+      board.category = categoryId;
+    }
+    await board.save({ session: sess, validateModifiedOnly: true });
+    await sess.commitTransaction();
+  } catch (err) {
+    const error = new HttpError(
+      "Failed to update board. Please try again.",
+      500,
+    );
+    return next(error);
+  }
+
+  return res.status(200).json({ board: board.toObject({ getters: true }) });
 };
 
 const deleteBoard = (req, res, next) => {
