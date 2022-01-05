@@ -7,13 +7,43 @@ const logger = require("../utils/logger");
 const Board = require("../models/board");
 const BoardCategory = require("../models/boardCategory");
 
-const getAllBoards = (req, res, next) => {
-  return res.json({ message: "Fetching all boards..." });
+/**
+ * Fetches all boards from the database.
+ */
+const getAllBoards = async (req, res, next) => {
+  let boards;
+
+  try {
+    boards = await Board.find({});
+  } catch (err) {
+    logger.error("Failed to fetch boards for GET request at /boards.");
+    const error = new HttpError("Fetching boards failed.", 500);
+    return next(error);
+  }
+
+  return res.json({
+    boards: boards.map((board) => board.toObject({ getters: true })),
+  });
 };
 
-const getBoardById = (req, res, next) => {
-  const id = req.params.boardId;
-  return res.json({ message: `Fetching board ${id}...` });
+/**
+ * Fetches a board based on its ID.
+ */
+const getBoardById = async (req, res, next) => {
+  const { boardId } = req.params;
+
+  let board;
+  try {
+    board = await Board.findById(boardId);
+  } catch (err) {
+    const error = new HttpError(
+      `Could not find board with ID ${boardId}.`,
+      404,
+    );
+    return next(error);
+  }
+
+  return res.status(200).json({ board: board.toObject({ getters: true }) });
 };
 
 /**
