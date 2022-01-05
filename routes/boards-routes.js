@@ -13,7 +13,7 @@ router.post(
   "/",
   [
     check("topic").not().isEmpty(),
-    check("category").not().isEmpty().isAlphanumeric(),
+    check("categoryId").not().isEmpty().isAlphanumeric(),
   ],
   boardsController.createBoard,
 );

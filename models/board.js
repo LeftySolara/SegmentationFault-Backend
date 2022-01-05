@@ -9,11 +9,13 @@ const boardSchema = new Schema({
     required: true,
     ref: "BoardCategory",
   },
-  threads: {
-    type: mongoose.Types.ObjectId,
-    required: false,
-    ref: "Thread",
-  },
+  threads: [
+    {
+      type: mongoose.Types.ObjectId,
+      required: false,
+      ref: "Thread",
+    },
+  ],
 });
 
-module.exports = mongoose.model(boardSchema, "Board");
+module.exports = mongoose.model("Board", boardSchema);
