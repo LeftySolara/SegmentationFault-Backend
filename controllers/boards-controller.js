@@ -174,9 +174,47 @@ const updateBoard = async (req, res, next) => {
   return res.status(200).json({ board: board.toObject({ getters: true }) });
 };
 
-const deleteBoard = (req, res, next) => {
-  const id = req.params.boardId;
-  return res.json(`Deleting board ${id}...`);
+/**
+ * Deletes a board from the database. This also removes it
+ * from the corresponding BoardCategory entry.
+ *
+ * @returns A JSON-formatted HTTP response.
+ *
+ */
+const deleteBoard = async (req, res, next) => {
+  const { boardId } = req.params;
+
+  let board;
+  try {
+    board = await Board.findById(boardId).populate("category");
+  } catch (err) {
+    const error = new HttpError("Could not delete board.", 500);
+    return next(error);
+  }
+
+  if (!board) {
+    const error = new HttpError("Could not find board.", 404);
+    return next(error);
+  }
+
+  /* TODO: Also delete the board's threads. */
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+
+    /* Remove the board from its category. */
+    board.category.boards.pull(board);
+    await board.category.save({ session: sess, validateModifiedOnly: true });
+
+    await Board.findByIdAndDelete(boardId);
+    await sess.commitTransaction();
+  } catch (err) {
+    const error = new HttpError("Unable to delete board.", 500);
+    return next(error);
+  }
+
+  return res.status(200).json({ message: "Successfully deleted board." });
 };
 
 exports.getAllBoards = getAllBoards;
