@@ -14,7 +14,8 @@ router.get("/user/:userId", threadsController.getThreadsByUser);
 router.post(
   "/",
   [
-    check("author").not().isEmpty().isAlphanumeric(),
+    check("authorId").not().isEmpty().isAlphanumeric(),
+    check("boardId").not().isEmpty().isAlphanumeric(),
     check("topic").not().isEmpty(),
   ],
   threadsController.createThread,
