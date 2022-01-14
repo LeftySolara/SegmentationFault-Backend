@@ -2,18 +2,49 @@ const mongoose = require("mongoose");
 
 const validateRequestInputs = require("../utils/inputValidator");
 const HttpError = require("../utils/http-error");
+const logger = require("../utils/logger");
 
 const Thread = require("../models/thread");
 const Board = require("../models/board");
 const User = require("../models/user");
 
-const getAllThreads = (req, res, next) => {
-  return res.json({ message: "Fetching all threads..." });
+/**
+ * Fetches all threads in the database.
+ */
+const getAllThreads = async (req, res, next) => {
+  let threads;
+
+  try {
+    threads = await Thread.find({});
+  } catch (err) {
+    logger.error("Failed to fetch threads for GET request at /threads.");
+    const error = new HttpError("Fetching threads failed.", 500);
+    return next(error);
+  }
+
+  return res.status(200).json({
+    threads: threads.map((thread) => thread.toObject({ getters: true })),
+  });
 };
 
-const getThreadById = (req, res, next) => {
-  const id = req.params.threadId;
-  return res.json({ message: `Fetching thread ${id}...` });
+/**
+ * Fetches a thread based on its ID.
+ */
+const getThreadById = async (req, res, next) => {
+  const { threadId } = req.params;
+
+  let thread;
+  try {
+    thread = await Thread.findById(threadId);
+  } catch (err) {
+    const error = new HttpError(
+      `Could not find thread with ID ${threadId}.`,
+      404,
+    );
+    return next(error);
+  }
+
+  return res.status(200).json({ thread: thread.toObject({ getters: true }) });
 };
 
 const getThreadsByUser = (req, res, next) => {
