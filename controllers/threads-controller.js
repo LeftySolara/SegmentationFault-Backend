@@ -47,9 +47,25 @@ const getThreadById = async (req, res, next) => {
   return res.status(200).json({ thread: thread.toObject({ getters: true }) });
 };
 
-const getThreadsByUser = (req, res, next) => {
-  const id = req.params.userId;
-  return res.json({ message: `Getting threads by user ${id}...` });
+/**
+ * Fetches a list of all threads created by a specific user.
+ *
+ * @param {String} req.params.authorId The ID of the user to find threads for.
+ */
+const getThreadsByUser = async (req, res, next) => {
+  const { authorId } = req.params;
+
+  let threads;
+  try {
+    threads = await Thread.find({ author: authorId });
+  } catch (err) {
+    const error = new HttpError("Error fetching threads from user.", 500);
+    return next(error);
+  }
+
+  return res.status(200).json({
+    threads: threads.map((thread) => thread.toObject({ getters: true })),
+  });
 };
 
 /**

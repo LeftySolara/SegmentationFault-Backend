@@ -9,7 +9,7 @@ router.get("/", threadsController.getAllThreads);
 
 router.get("/:threadId", threadsController.getThreadById);
 
-router.get("/user/:userId", threadsController.getThreadsByUser);
+router.get("/user/:authorId", threadsController.getThreadsByUser);
 
 router.post(
   "/",
