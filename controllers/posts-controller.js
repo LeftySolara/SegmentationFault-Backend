@@ -142,13 +142,40 @@ const createPost = async (req, res, next) => {
   return res.status(201).json({ message: "Created new post." });
 };
 
-const updatePost = (req, res, next) => {
+/**
+ * Updates a post's content.
+ *
+ * @param {String} req.params.postId The ID of the post to update.
+ * @param {String} res.body.content The new content for the post.
+ *
+ * @returns On success, returns an HTTP status code of 200, along with the updated post.
+ */
+const updatePost = async (req, res, next) => {
   const validationError = validateRequestInputs(req);
   if (validationError) {
     return next(validationError);
   }
-  const id = req.params.postId;
-  return res.json({ message: `Updating post ${id}...` });
+
+  const { postId } = req.params;
+  const { content } = req.body;
+
+  let post;
+  try {
+    post = await Post.findById(postId);
+  } catch (err) {
+    const error = new HttpError("Post not found.", 404);
+    return next(error);
+  }
+
+  try {
+    post.content = content;
+    await post.save();
+  } catch (err) {
+    const error = new HttpError("Error updating post.", 500);
+    return next(error);
+  }
+
+  return res.status(200).json({ post: post.toObject({ getters: true }) });
 };
 
 const deletePost = (req, res, next) => {
