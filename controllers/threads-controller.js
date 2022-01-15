@@ -7,6 +7,7 @@ const logger = require("../utils/logger");
 const Thread = require("../models/thread");
 const Board = require("../models/board");
 const User = require("../models/user");
+const Post = require("../models/post");
 
 /**
  * Fetches all threads in the database.
@@ -177,9 +178,59 @@ const updateThread = async (req, res, next) => {
   return res.status(200).json({ thread: thread.toObject({ getters: true }) });
 };
 
-const deleteThread = (req, res, next) => {
-  const id = req.params.threadId;
-  return res.json({ message: `Deleting thread ${id}...` });
+/**
+ * Deletes a thread from the database.
+ *
+ * @param {String} req.params.threadId The ID of the thread to delete.
+ *
+ * @returns On success, returns an HTTP response of 200.
+ */
+const deleteThread = async (req, res, next) => {
+  const { threadId } = req.params;
+
+  let thread;
+  try {
+    thread = await Thread.findById(threadId)
+      .populate("author")
+      .populate("board")
+      .populate("posts");
+  } catch (err) {
+    const error = new HttpError("Error deleting thread.", 500);
+    return next(error);
+  }
+
+  if (!thread) {
+    const error = new HttpError("Could not find thread to delete.", 404);
+    return next(error);
+  }
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+
+    /* Remove the thread from its board. */
+    thread.board.threads.pull(thread);
+    await thread.board.save({ session: sess, validateModifiedOnly: true });
+
+    /* Remove the thread from the author. */
+    thread.author.threads.pull(thread);
+    await thread.author.save({ session: sess, validateModifiedOnly: true });
+
+    /* Delete all of the thread's posts. */
+    thread.posts.forEach(async (post) => {
+      post.author.posts.pull(post);
+      await post.remove();
+    });
+
+    await Thread.findByIdAndDelete(threadId);
+
+    sess.commitTransaction();
+  } catch (err) {
+    const error = new HttpError("Unable to delete thread.", 500);
+    return next(error);
+  }
+
+  return res.status(200).json({ message: "Successfully deleted thread." });
 };
 
 exports.getAllThreads = getAllThreads;
