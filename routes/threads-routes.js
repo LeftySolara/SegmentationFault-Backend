@@ -23,7 +23,7 @@ router.post(
 
 router.patch(
   "/:threadId",
-  [check("posts").not().isEmpty()],
+  [check("topic").not().isEmpty()],
   threadsController.updateThread,
 );
 

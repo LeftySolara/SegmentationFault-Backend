@@ -142,13 +142,39 @@ const createThread = async (req, res, next) => {
   return res.status(201).json({ message: `Created new thread ${topic}` });
 };
 
-const updateThread = (req, res, next) => {
+/**
+ *
+ * @param {String} req.params.threadId The ID of the thread to update.
+ * @param {String} res.body.topic The new topic for the thread.
+ *
+ * @returns On success, returns an HTTP status code of 200, along with the updated thread.
+ */
+const updateThread = async (req, res, next) => {
   const validationError = validateRequestInputs(req);
   if (validationError) {
     return next(validationError);
   }
-  const id = req.params.threadId;
-  return res.json({ message: `Updating thread ${id}...` });
+
+  const { threadId } = req.params;
+  const { topic } = req.body;
+
+  let thread;
+  try {
+    thread = await Thread.findById(threadId);
+  } catch (err) {
+    const error = new HttpError("Thread not found.", 404);
+    return next(error);
+  }
+
+  try {
+    thread.topic = topic;
+    await thread.save();
+  } catch (err) {
+    const error = new HttpError("Error updating thread.", 500);
+    return next(error);
+  }
+
+  return res.status(200).json({ thread: thread.toObject({ getters: true }) });
 };
 
 const deleteThread = (req, res, next) => {
