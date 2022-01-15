@@ -14,8 +14,8 @@ router.get("/user/:userId", postController.getPostsByUser);
 router.post(
   "/",
   [
-    check("author").not().isEmpty().isAlphanumeric(),
-    check("thread").not().isEmpty().isAlphanumeric(),
+    check("authorId").not().isEmpty().isAlphanumeric(),
+    check("threadId").not().isEmpty().isAlphanumeric(),
     check("content").not().isEmpty(),
   ],
   postController.createPost,
