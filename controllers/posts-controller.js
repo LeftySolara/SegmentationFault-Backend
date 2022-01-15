@@ -178,9 +178,44 @@ const updatePost = async (req, res, next) => {
   return res.status(200).json({ post: post.toObject({ getters: true }) });
 };
 
-const deletePost = (req, res, next) => {
-  const id = req.params.postId;
-  return res.json({ message: `Deleting post ${id}...` });
+const deletePost = async (req, res, next) => {
+  const { postId } = req.params;
+
+  let post;
+
+  try {
+    post = await Post.findById(postId).populate("author").populate("thread");
+  } catch (err) {
+    const error = new HttpError("Error deleting post.", 500);
+    return next(error);
+  }
+
+  if (!post) {
+    const error = new HttpError("Could not find post to delete.", 404);
+    return next(error);
+  }
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+
+    /* Remove the post from its thread. */
+    post.thread.posts.pull(post);
+    await post.thread.save({ session: sess, validateModifiedOnly: true });
+
+    /* Remove the post from the user. */
+    post.author.posts.pull(post);
+    await post.author.save({ session: sess, validateModifiedOnly: true });
+
+    await Post.findByIdAndDelete(postId);
+
+    sess.commitTransaction();
+  } catch (err) {
+    const error = new HttpError("Unable to delete post.", 500);
+    return next(error);
+  }
+
+  return res.status(200).json({ message: "Successfully deleted post." });
 };
 
 exports.getAllPosts = getAllPosts;
