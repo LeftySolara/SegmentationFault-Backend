@@ -20,11 +20,11 @@ const getAllCategories = async (req, res, next) => {
     return next(error);
   }
 
-  return res.status(200).json({
-    boardCategories: boardCategories.map((category) =>
-      category.toObject({ getters: true }),
-    ),
-  });
+  return res
+    .status(200)
+    .json(
+      boardCategories.map((category) => category.toObject({ getters: true })),
+    );
 };
 
 /**
