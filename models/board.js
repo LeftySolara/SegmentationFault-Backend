@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 
 const boardSchema = new Schema({
   topic: { type: String, required: true },
+  description: { type: String, required: true },
   category: {
     type: mongoose.Types.ObjectId,
     required: true,

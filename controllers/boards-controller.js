@@ -59,7 +59,7 @@ const createBoard = async (req, res, next) => {
     return next(validationError);
   }
 
-  const { topic, categoryId } = req.body;
+  const { topic, description, categoryId } = req.body;
 
   /* Check whether the given category ID corresponds to an existing category. */
   let existingCategory;
@@ -92,6 +92,7 @@ const createBoard = async (req, res, next) => {
 
   const createdBoard = new Board({
     topic,
+    description,
     category: categoryId,
     threads: [],
   });
@@ -133,7 +134,7 @@ const updateBoard = async (req, res, next) => {
     return next(validationError);
   }
 
-  const { topic, categoryId } = req.body;
+  const { topic, description, categoryId } = req.body;
   const { boardId } = req.params;
 
   let board;
@@ -146,6 +147,7 @@ const updateBoard = async (req, res, next) => {
 
   try {
     board.topic = topic;
+    board.description = description;
 
     const sess = await mongoose.startSession();
     sess.startTransaction();

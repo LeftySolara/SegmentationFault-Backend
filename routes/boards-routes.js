@@ -13,6 +13,7 @@ router.post(
   "/",
   [
     check("topic").not().isEmpty(),
+    check("description").not().isEmpty(),
     check("categoryId").not().isEmpty().isAlphanumeric(),
   ],
   boardsController.createBoard,
@@ -20,7 +21,7 @@ router.post(
 
 router.patch(
   "/:boardId",
-  [check("topic").not().isEmpty()],
+  [check("topic").not().isEmpty(), check("description").not().isEmpty()],
   boardsController.updateBoard,
 );
 
