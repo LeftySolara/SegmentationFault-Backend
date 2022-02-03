@@ -9,6 +9,8 @@ router.get("/", boardsController.getAllBoards);
 
 router.get("/:boardId", boardsController.getBoardById);
 
+router.get("/category/:categoryId", boardsController.getBoardsByCategory);
+
 router.post(
   "/",
   [
