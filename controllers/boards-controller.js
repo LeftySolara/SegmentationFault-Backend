@@ -47,6 +47,23 @@ const getBoardById = async (req, res, next) => {
 };
 
 /**
+ * Fetches a list of boards that belong to a given category.
+ */
+const getBoardsByCategory = async (req, res, next) => {
+  const { categoryId } = req.params;
+
+  let boards;
+  try {
+    boards = await Board.find({ category: categoryId });
+  } catch (err) {
+    const error = new HttpError("Could not find boards for category.", 404);
+    return next(error);
+  }
+
+  return res.status(200).json({ boards });
+};
+
+/**
  * Creates a new board and saves it to the database.
  *
  * @param {String} req.body.topic The board topic. This will be used as the name of the board.
@@ -221,6 +238,7 @@ const deleteBoard = async (req, res, next) => {
 
 exports.getAllBoards = getAllBoards;
 exports.getBoardById = getBoardById;
+exports.getBoardsByCategory = getBoardsByCategory;
 exports.createBoard = createBoard;
 exports.updateBoard = updateBoard;
 exports.deleteBoard = deleteBoard;
