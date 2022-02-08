@@ -12,12 +12,14 @@ router.get("/:boardCategoryId", boardCategoriesController.getCategoryById);
 router.post(
   "/",
   [check("topic").not().isEmpty()],
+  [check("sortOrder").isNumeric()],
   boardCategoriesController.createCategory,
 );
 
 router.patch(
   "/:boardCategoryId",
   [check("topic").not().isEmpty()],
+  [check("sortOrder").isNumeric()],
   boardCategoriesController.updateCategory,
 );
 
