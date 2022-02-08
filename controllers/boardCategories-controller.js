@@ -61,7 +61,7 @@ const createCategory = async (req, res, next) => {
     return next(validationErrpr);
   }
 
-  const { topic } = req.body;
+  const { topic, sortOrder } = req.body;
 
   let existingBoardCategory;
   try {
@@ -79,6 +79,7 @@ const createCategory = async (req, res, next) => {
   const createdBoardCategory = new BoardCategory({
     topic,
     boards: [],
+    sortOrder,
   });
 
   try {
@@ -108,7 +109,7 @@ const updateCategory = async (req, res, next) => {
     return next(validationError);
   }
 
-  const { topic } = req.body;
+  const { topic, sortOrder } = req.body;
   const { boardCategoryId } = req.params;
   let boardCategory;
 
@@ -120,6 +121,7 @@ const updateCategory = async (req, res, next) => {
   }
 
   boardCategory.topic = topic;
+  boardCategory.sortOrder = sortOrder;
   try {
     await boardCategory.save();
   } catch (err) {
