@@ -140,7 +140,9 @@ const createThread = async (req, res, next) => {
     return next(error);
   }
 
-  return res.status(201).json({ message: `Created new thread ${topic}` });
+  return res
+    .status(201)
+    .json({ thread: createdThread.toObject({ getters: true }) });
 };
 
 /**
