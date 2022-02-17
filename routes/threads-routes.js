@@ -11,6 +11,8 @@ router.get("/:threadId", threadsController.getThreadById);
 
 router.get("/user/:authorId", threadsController.getThreadsByUser);
 
+router.get("/board/:boardId", threadsController.getThreadsByBoard);
+
 router.post(
   "/",
   [
