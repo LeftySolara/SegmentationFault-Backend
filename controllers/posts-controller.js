@@ -75,7 +75,9 @@ const getPostsByThread = async (req, res, next) => {
 
   let posts;
   try {
-    posts = await Post.find({ thread: threadId }).sort({ dateCreated: "asc" });
+    posts = await Post.find({ thread: threadId })
+      .populate("author", "username")
+      .sort({ dateCreated: "asc" });
   } catch (err) {
     const error = new HttpError("Error fetching posts from thread.", 500);
     return next(error);
