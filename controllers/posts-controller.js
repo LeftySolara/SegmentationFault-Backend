@@ -66,6 +66,27 @@ const getPostsByUser = async (req, res, next) => {
 };
 
 /**
+ * Fetches a list of all posts from a thread.
+ *
+ * @param {String} req.params.threadId The id of the thread to fetch posts from.
+ */
+const getPostsByThread = async (req, res, next) => {
+  const { threadId } = req.params;
+
+  let posts;
+  try {
+    posts = await Post.find({ thread: threadId }).sort({ dateCreated: "asc" });
+  } catch (err) {
+    const error = new HttpError("Error fetching posts from thread.", 500);
+    return next(error);
+  }
+
+  return res
+    .status(200)
+    .json({ posts: posts.map((post) => post.toObject({ getters: true })) });
+};
+
+/**
  * Creates a new post in the database.
  *
  * @param {String} req.body.authorId The ID of the post's author.
@@ -221,6 +242,7 @@ const deletePost = async (req, res, next) => {
 exports.getAllPosts = getAllPosts;
 exports.getPostById = getPostById;
 exports.getPostsByUser = getPostsByUser;
+exports.getPostsByThread = getPostsByThread;
 exports.createPost = createPost;
 exports.updatePost = updatePost;
 exports.deletePost = deletePost;

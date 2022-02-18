@@ -11,6 +11,8 @@ router.get("/:postId", postController.getPostById);
 
 router.get("/user/:userId", postController.getPostsByUser);
 
+router.get("/thread/:threadId", postController.getPostsByThread);
+
 router.post(
   "/",
   [
