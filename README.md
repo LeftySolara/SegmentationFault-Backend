@@ -15,7 +15,7 @@ For the backend code, visit these repositories:
 ## Planned Features
 
 - [ ] User authentication
-- [ ] Thread creation
+- [x] Thread creation
 - [ ] Post/reply creation
 - [ ] Post editing
 - [ ] Post deletion
