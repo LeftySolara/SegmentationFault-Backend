@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const validateRequestInputs = require("../utils/inputValidator");
 const HttpError = require("../utils/http-error");
 const logger = require("../utils/logger");
@@ -93,6 +94,21 @@ const createUser = async (req, res, next) => {
     threads: [],
   });
 
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: createdUser.id, email: createdUser.email },
+      process.env.JWT_KEY,
+      { expiresIn: "1h" },
+    );
+  } catch (err) {
+    const error = new HttpError(
+      "Signing up failed. Please try again later.",
+      500,
+    );
+    return next(error);
+  }
+
   try {
     await createdUser.save();
   } catch (err) {
@@ -104,7 +120,13 @@ const createUser = async (req, res, next) => {
   }
 
   logger.info(`Created new user ${username}.`);
-  return res.status(201).json({ message: `Created new user ${username}` });
+
+  return res.status(201).json({
+    userId: createdUser.id,
+    username: createdUser.username,
+    email: createdUser.email,
+    token,
+  });
 };
 
 /**

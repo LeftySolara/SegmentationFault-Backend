@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 const User = require("../models/user");
 const HttpError = require("../utils/http-error");
 
@@ -47,12 +49,25 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  const userObj = user.toObject({ getters: true });
-  delete userObj.password;
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_KEY,
+      { expiresIn: "1h" },
+    );
+  } catch (err) {
+    const error = new HttpError(
+      "Logging in failed. Please try again later.",
+      500,
+    );
+    return next(error);
+  }
 
   return res.status(200).json({
-    message: "Login successful.",
-    user: userObj,
+    userId: user.id,
+    email: user.email,
+    token,
   });
 };
 
