@@ -35,6 +35,11 @@ router.post(
   authController.registerUser,
 );
 
-router.post("/login", authController.login);
+router.post(
+  "/login",
+  check("email").isEmail(),
+  check("password").not().isEmpty(),
+  authController.login,
+);
 
 module.exports = router;
