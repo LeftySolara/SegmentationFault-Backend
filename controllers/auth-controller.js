@@ -17,14 +17,6 @@ const logout = (req, res, next) => {
   return res.json({ message: "Logging out..." });
 };
 
-const registerUser = (req, res, next) => {
-  const validationError = validateRequestInputs(req);
-  if (validationError) {
-    return next(validationError);
-  }
-  res.json({ message: "Regestering User" });
-};
-
 /**
  * Logs the user into the application.
  *
