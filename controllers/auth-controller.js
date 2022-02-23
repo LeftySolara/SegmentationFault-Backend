@@ -66,5 +66,4 @@ const login = async (req, res, next) => {
 exports.checkIsAuthenticated = checkIsAuthenticated;
 exports.checkIsAdmin = checkIsAdmin;
 exports.logout = logout;
-exports.registerUser = registerUser;
 exports.login = login;
