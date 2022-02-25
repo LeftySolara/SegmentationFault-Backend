@@ -3,6 +3,8 @@ const { check } = require("express-validator");
 
 const boardsController = require("../controllers/boards-controller");
 
+const checkAuth = require("../middleware/check-auth");
+
 const router = express.Router();
 
 router.get("/", boardsController.getAllBoards);
@@ -10,6 +12,8 @@ router.get("/", boardsController.getAllBoards);
 router.get("/:boardId", boardsController.getBoardById);
 
 router.get("/category/:categoryId", boardsController.getBoardsByCategory);
+
+router.use(checkAuth);
 
 router.post(
   "/",
