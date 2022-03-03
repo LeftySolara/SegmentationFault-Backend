@@ -2,19 +2,16 @@
 
 SegmentationFault is an online forum where users can post about and discuss various programming topics.
 
-To view the frontend code, please visit one of the following repositories:
+For issue tracking, merge requests, and general viewing, please visit the [main project page on Gitlab](https://git.julianneadams.info/segmentationfault).
 
-- [GitLab (main repo)](https://git.julianneadams.info/LeftySolara/segmentationfault-frontend)
-- [GitHub (mirror)](https://github.com/LeftySolara/SegmentationFault-Frontend)
+The code for this project is also available for viewing on GitHub:
 
-For the backend code, visit these repositories:
-
-- [GitLab (main repo)](https://git.julianneadams.info/LeftySolara/segmentationfault-backend)
-- [GitHub (mirror)](https://github.com/LeftySolara/SegmentationFault-Backend)
+[Frontend Code](https://github.com/LeftySolara/SegmentationFault-Frontend)
+[Backend Code](https://github.com/LeftySolara/SegmentationFault-Backend)
 
 ## Planned Features
 
-- [X] User authentication
+- [x] User authentication
 - [x] Thread creation
 - [ ] Post/reply creation
 - [ ] Post editing
