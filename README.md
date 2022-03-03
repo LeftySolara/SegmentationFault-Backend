@@ -9,6 +9,8 @@ The code for this project is also available for viewing on GitHub:
 - [Frontend Code](https://github.com/LeftySolara/SegmentationFault-Frontend)
 - [Backend Code](https://github.com/LeftySolara/SegmentationFault-Backend)
 
+[Live Demo](https://segmentationfault-30d0a.web.app/)
+
 ## Planned Features
 
 - [x] User authentication
