@@ -13,7 +13,7 @@ The code for this project is also available for viewing on GitHub:
 
 - [x] User authentication
 - [x] Thread creation
-- [ ] Post/reply creation
+- [x] Post/reply creation
 - [ ] Post editing
 - [ ] Post deletion
 - [ ] Moderation tools
