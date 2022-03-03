@@ -1,9 +1,11 @@
 const dotenv = require("dotenv");
 
 /* Load environment variables. */
-const configOutput = dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
-if (configOutput.error) {
-  throw configOutput.error;
+if (process.env.NODE_ENV !== "production") {
+  const configOutput = dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+  if (configOutput.error) {
+    throw configOutput.error;
+  }
 }
 
 const express = require("express");
@@ -59,6 +61,6 @@ mongoose
   .then(() => {
     logger.info(`Connected to ${process.env.NODE_ENV} database.`);
     logger.info(`Listening on port ${process.env.PORT}.`);
-    app.listen(process.env.PORT);
+    app.listen(process.env.PORT || 5000);
   })
   .catch((err) => logger.error(err.message));
