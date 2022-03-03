@@ -6,8 +6,8 @@ For issue tracking, merge requests, and general viewing, please visit the [main 
 
 The code for this project is also available for viewing on GitHub:
 
-[Frontend Code](https://github.com/LeftySolara/SegmentationFault-Frontend)
-[Backend Code](https://github.com/LeftySolara/SegmentationFault-Backend)
+- [Frontend Code](https://github.com/LeftySolara/SegmentationFault-Frontend)
+- [Backend Code](https://github.com/LeftySolara/SegmentationFault-Backend)
 
 ## Planned Features
 
