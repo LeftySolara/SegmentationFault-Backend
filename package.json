@@ -6,6 +6,7 @@
   "scripts": {
     "start-dev": "NODE_ENV=development nodemon app.js",
     "start-prod": "NODE_ENV=production nodemon app.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Julianne Adams <julianne@julianneadams.info>",
